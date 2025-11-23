@@ -1,8 +1,8 @@
-name: Build & Push All Backend Microservices
+name: Build & Push Backend Microservices
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build-and-push:
@@ -15,23 +15,21 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          creds: ${{ secrets.AZURE_CREDENTIALS_JSON }}
 
-      - name: Login to ACR
+      - name: Docker login to ACR
         run: |
-          az acr login --name ${{ secrets.ACR_LOGIN_SERVER }}
+          echo ${{ secrets.ACR_PASSWORD }} | docker login ${{ secrets.ACR_LOGIN_SERVER }} \
+            --username ${{ secrets.ACR_USERNAME }} --password-stdin
 
-      - name: Build & Push each microservice
+      - name: Build & Push Microservices
         run: |
           for service in services/*; do
             if [ -f "$service/Dockerfile" ]; then
               SERVICE_NAME=$(basename "$service")
               IMAGE="${{ secrets.ACR_LOGIN_SERVER }}/$SERVICE_NAME:latest"
-              
-              echo "🔧 Construyendo $SERVICE_NAME"
+
+              echo "🚀 Construyendo $SERVICE_NAME"
               docker build -t $IMAGE $service
 
               echo "⬆ Subiendo $SERVICE_NAME"

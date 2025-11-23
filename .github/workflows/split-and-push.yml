@@ -1,56 +1,52 @@
-name: Split and Push Front & Back
+name: Split & Push Repositories
 
 on:
   push:
-    branches:
-      - main
+    branches: ["main"]
 
 jobs:
-  split:
+  split-and-push:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout monorepo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive  # 🔥 Permite copiar .github y ocultos
 
-      # --------------------------
-      #  FRONTEND -> PetTrack-Front
-      # --------------------------
-      - name: Prepare frontend folder
-        run: |
-          mkdir front_export
-          cp -R clients/web-client/* front_export/
-
-      - name: Push frontend to PetTrack-Front
+      # ─────────────────────────────────────────────
+      # Empujar FRONTEND
+      # ─────────────────────────────────────────────
+      - name: Push Frontend to separate repo
         uses: cpina/github-action-push-to-another-repository@main
         env:
-          API_TOKEN_GITHUB: ${{ secrets.SPLIT_PUSH_TOKEN }}
+          API_TOKEN_GITHUB: ${{ secrets.PAT_GITHUB }}
         with:
-          source-directory: front_export
-          destination-github-username: proyecto-nube
-          destination-repository-name: PetTrack-Front
+          source-directory: "clients/web-client"
+          destination-github-username: "proyecto-nube"
+          destination-repository-name: "PetTrack-Front"
+          target-branch: "main"
+          user-email: "actions@github.com"
           user-name: "github-actions"
-          user-email: "github-actions@github.com"
-          target-branch: main
           commit-message: "Auto-sync frontend from monorepo"
+          create-target-branch-if-needed: true
+          target-directory: "."  # 🔥 Copia .github correctamente
 
-      # -------------------------
-      #  BACKEND -> PetTrack-Back
-      # -------------------------
-      - name: Prepare backend folder
-        run: |
-          mkdir back_export
-          cp -R services/* back_export/
-
-      - name: Push backend to PetTrack-Back
+      # ─────────────────────────────────────────────
+      # Empujar BACKEND
+      # ─────────────────────────────────────────────
+      - name: Push Backend to separate repo
         uses: cpina/github-action-push-to-another-repository@main
         env:
-          API_TOKEN_GITHUB: ${{ secrets.SPLIT_PUSH_TOKEN }}
+          API_TOKEN_GITHUB: ${{ secrets.PAT_GITHUB }}
         with:
-          source-directory: back_export
-          destination-github-username: proyecto-nube
-          destination-repository-name: PetTrack-Back
+          source-directory: "services"
+          destination-github-username: "proyecto-nube"
+          destination-repository-name: "PetTrack-Back"
+          target-branch: "main"
+          user-email: "actions@github.com"
           user-name: "github-actions"
-          user-email: "github-actions@github.com"
-          target-branch: main
           commit-message: "Auto-sync backend from monorepo"
+          create-target-branch-if-needed: true
+          target-directory: "."  # 🔥 Copia .github correctamente

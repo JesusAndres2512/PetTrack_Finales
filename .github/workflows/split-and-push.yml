@@ -9,20 +9,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # ------------------------------------------------------
+      # CHECKOUT MONOREPO
+      # ------------------------------------------------------
       - name: Checkout monorepo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          submodules: recursive
 
       # ======================================================
       # FRONTEND
       # ======================================================
       - name: Prepare FRONTEND export
         run: |
+          rm -rf export-frontend
           mkdir export-frontend
+
+          # Copiar contenido normal
           cp -r clients/web-client/* export-frontend/
-          cp -r clients/web-client/.github export-frontend/.github 2>/dev/null || true
+
+          # Copiar directorios ocultos como .github
+          if [ -d clients/web-client/.github ]; then
+            cp -r clients/web-client/.github export-frontend/.github
+          fi
 
       - name: Push FRONTEND to external repo
         uses: cpina/github-action-push-to-another-repository@main
@@ -37,16 +46,21 @@ jobs:
           user-name: "github-actions"
           commit-message: "Auto-sync frontend from monorepo"
           create-target-branch-if-needed: true
-          target-directory: ""   # destino raíz del repo
+          target-directory: "."   # Colocar todo en raíz del repo
 
       # ======================================================
       # BACKEND
       # ======================================================
       - name: Prepare BACKEND export
         run: |
+          rm -rf export-backend
           mkdir export-backend
+
           cp -r services/* export-backend/
-          cp -r services/.github export-backend/.github 2>/dev/null || true
+
+          if [ -d services/.github ]; then
+            cp -r services/.github export-backend/.github
+          fi
 
       - name: Push BACKEND to external repo
         uses: cpina/github-action-push-to-another-repository@main
@@ -61,4 +75,4 @@ jobs:
           user-name: "github-actions"
           commit-message: "Auto-sync backend from monorepo"
           create-target-branch-if-needed: true
-          target-directory: ""
+          target-directory: "."   # Colocar todo en raíz del repo

@@ -27,7 +27,7 @@ Este proyecto sigue una arquitectura basada en microservicios, todos gestionados
 - **api-gateway**: Puerta de entrada, documentación y enrutamiento.
 - **web-client**: Cliente web con (HTML/CSS).
 
-## 🛠️ Tecnologías Utilizadas
+## 🛠️ Tecnologías Utilizadas.
 
 | Herramienta       | Descripción                          |
 |------------------|--------------------------------------|

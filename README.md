@@ -41,7 +41,7 @@ Este proyecto sigue una arquitectura basada en microservicios, todos gestionados
 | HTML/CSS         | Cliente web simple                    |
 | uvicorn --reload | Recarga automática del servidor en desarrollo   |
 
-## 🏗️ Estructura del Monorepo
+## 🏗️ Estructura del Monorepo.
 
 ```bash
 PetTrack/

@@ -24,7 +24,7 @@ jobs:
           cp -R clients/web-client/* frontend_dir/
 
       - name: Push to PetTrack-Front
-        uses: cpina/github-action-push-to-another-repository@v2.8.0
+        uses: cpina/github-action-push-to-another-repository@v2.12.0
         env:
           API_TOKEN_GITHUB: ${{ secrets.SPLIT_PUSH_TOKEN }}
         with:
@@ -42,7 +42,7 @@ jobs:
           cp -R services/* backend_dir/
 
       - name: Push to PetTrack-Back
-        uses: cpina/github-action-push-to-another-repository@v2.8.0
+        uses: cpina/github-action-push-to-another-repository@v2.12.0
         env:
           API_TOKEN_GITHUB: ${{ secrets.SPLIT_PUSH_TOKEN }}
         with:

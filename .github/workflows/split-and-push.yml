@@ -12,41 +12,45 @@ jobs:
     steps:
       - name: Checkout monorepo
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
-      # -------------------------------
-      # 1. SPLIT Y PUSH DEL FRONTEND
-      # -------------------------------
-      - name: Prepare frontend repo folder
+      # -------------------------
+      #  FRONTEND -> PetTrack-Front
+      # -------------------------
+      - name: Prepare frontend folder
         run: |
-          mkdir frontend_dir
-          cp -R clients/web-client/* frontend_dir/
+          mkdir front_export
+          cp -R clients/web-client/* front_export/
 
-      - name: Push to PetTrack-Front
+      - name: Push frontend to PetTrack-Front
         uses: cpina/github-action-push-to-another-repository@main
         env:
           API_TOKEN_GITHUB: ${{ secrets.SPLIT_PUSH_TOKEN }}
         with:
-          repository: proyecto-nube/PetTrack-Front
-          branch: main
-          commit-message: "Auto-sync from monorepo"
-          directory: frontend_dir
+          source-directory: front_export
+          destination-github-username: proyecto-nube
+          destination-repository-name: PetTrack-Front
+          user-name: "github-actions"
+          user-email: "github-actions@github.com"
+          target-branch: main
+          commit-message: "Auto-sync frontend from monorepo"
 
-      # -------------------------------
-      # 2. SPLIT Y PUSH DEL BACKEND
-      # -------------------------------
-      - name: Prepare backend repo folder
+      # -------------------------
+      #  BACKEND -> PetTrack-Back
+      # -------------------------
+      - name: Prepare backend folder
         run: |
-          mkdir backend_dir
-          cp -R services/* backend_dir/
+          mkdir back_export
+          cp -R services/* back_export/
 
-      - name: Push to PetTrack-Back
+      - name: Push backend to PetTrack-Back
         uses: cpina/github-action-push-to-another-repository@main
         env:
           API_TOKEN_GITHUB: ${{ secrets.SPLIT_PUSH_TOKEN }}
         with:
-          repository: proyecto-nube/PetTrack-Back
-          branch: main
-          commit-message: "Auto-sync from monorepo"
-          directory: backend_dir
+          source-directory: back_export
+          destination-github-username: proyecto-nube
+          destination-repository-name: PetTrack-Back
+          user-name: "github-actions"
+          user-email: "github-actions@github.com"
+          target-branch: main
+          commit-message: "Auto-sync backend from monorepo"

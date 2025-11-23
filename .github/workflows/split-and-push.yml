@@ -21,7 +21,7 @@ jobs:
       - name: Push Frontend to separate repo
         uses: cpina/github-action-push-to-another-repository@main
         env:
-          API_TOKEN_GITHUB: ${{ secrets.PAT_GITHUB }}
+          API_TOKEN_GITHUB: ${{ secrets.SPLIT_PUSH_TOKEN }}
         with:
           source-directory: "clients/web-client"
           destination-github-username: "proyecto-nube"
@@ -39,7 +39,7 @@ jobs:
       - name: Push Backend to separate repo
         uses: cpina/github-action-push-to-another-repository@main
         env:
-          API_TOKEN_GITHUB: ${{ secrets.PAT_GITHUB }}
+          API_TOKEN_GITHUB: ${{ secrets.SPLIT_PUSH_TOKEN }}
         with:
           source-directory: "services"
           destination-github-username: "proyecto-nube"

@@ -9,13 +9,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # ------------------------------------------------------
-      # CHECKOUT MONOREPO
-      # ------------------------------------------------------
       - name: Checkout monorepo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          submodules: recursive
 
       # ======================================================
       # FRONTEND
@@ -24,14 +22,8 @@ jobs:
         run: |
           rm -rf export-frontend
           mkdir export-frontend
-
-          # Copiar contenido normal
           cp -r clients/web-client/* export-frontend/
-
-          # Copiar directorios ocultos como .github
-          if [ -d clients/web-client/.github ]; then
-            cp -r clients/web-client/.github export-frontend/.github
-          fi
+          cp -r clients/web-client/.github export-frontend/.github || true
 
       - name: Push FRONTEND to external repo
         uses: cpina/github-action-push-to-another-repository@main
@@ -46,7 +38,8 @@ jobs:
           user-name: "github-actions"
           commit-message: "Auto-sync frontend from monorepo"
           create-target-branch-if-needed: true
-          target-directory: "."   # Colocar todo en raíz del repo
+          target-directory: ""
+
 
       # ======================================================
       # BACKEND
@@ -55,12 +48,8 @@ jobs:
         run: |
           rm -rf export-backend
           mkdir export-backend
-
           cp -r services/* export-backend/
-
-          if [ -d services/.github ]; then
-            cp -r services/.github export-backend/.github
-          fi
+          cp -r services/.github export-backend/.github || true
 
       - name: Push BACKEND to external repo
         uses: cpina/github-action-push-to-another-repository@main
@@ -75,4 +64,4 @@ jobs:
           user-name: "github-actions"
           commit-message: "Auto-sync backend from monorepo"
           create-target-branch-if-needed: true
-          target-directory: "."   # Colocar todo en raíz del repo
+          target-directory: ""

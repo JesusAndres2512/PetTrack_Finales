@@ -1,0 +1,52 @@
+name: Split and Push Front & Back
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  split:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout monorepo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      # -------------------------------
+      # 1. SPLIT Y PUSH DEL FRONTEND
+      # -------------------------------
+      - name: Prepare frontend repo folder
+        run: |
+          mkdir frontend_dir
+          cp -R clients/web-client/* frontend_dir/
+
+      - name: Push to PetTrack-Front
+        uses: cpina/github-action-push-to-another-repository@v2.8.0
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.SPLIT_PUSH_TOKEN }}
+        with:
+          repository: proyecto-nube/PetTrack-Front
+          branch: main
+          commit-message: "Auto-sync from monorepo"
+          directory: frontend_dir
+
+      # -------------------------------
+      # 2. SPLIT Y PUSH DEL BACKEND
+      # -------------------------------
+      - name: Prepare backend repo folder
+        run: |
+          mkdir backend_dir
+          cp -R services/* backend_dir/
+
+      - name: Push to PetTrack-Back
+        uses: cpina/github-action-push-to-another-repository@v2.8.0
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.SPLIT_PUSH_TOKEN }}
+        with:
+          repository: proyecto-nube/PetTrack-Back
+          branch: main
+          commit-message: "Auto-sync from monorepo"
+          directory: backend_dir

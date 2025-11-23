@@ -17,7 +17,7 @@ Por ello, se propone una solución digital integral que permita:
 - Interacción fluida entre clínica y dueño.
 - Mejora en calidad del servicio y fidelización.
 
-## 🚧 Arquitectura Basada en Microservicios
+## 🚧 Arquitectura Basada en Microservicios.
 
 Este proyecto sigue una arquitectura basada en microservicios, todos gestionados dentro de un monorepositorio. Cada microservicio está organizado en su propio directorio dentro del mismo repositorio:
 

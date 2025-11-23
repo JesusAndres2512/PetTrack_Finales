@@ -13,17 +13,23 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          submodules: recursive  # 🔥 Permite copiar .github y ocultos
+          submodules: recursive
 
-      # ─────────────────────────────────────────────
-      # Empujar FRONTEND
-      # ─────────────────────────────────────────────
-      - name: Push Frontend to separate repo
+      # ======================================================
+      # FRONTEND
+      # ======================================================
+      - name: Prepare FRONTEND export
+        run: |
+          mkdir export-frontend
+          cp -r clients/web-client/* export-frontend/
+          cp -r clients/web-client/.github export-frontend/.github 2>/dev/null || true
+
+      - name: Push FRONTEND to external repo
         uses: cpina/github-action-push-to-another-repository@main
         env:
           API_TOKEN_GITHUB: ${{ secrets.SPLIT_PUSH_TOKEN }}
         with:
-          source-directory: "clients/web-client"
+          source-directory: "export-frontend"
           destination-github-username: "proyecto-nube"
           destination-repository-name: "PetTrack-Front"
           target-branch: "main"
@@ -31,17 +37,23 @@ jobs:
           user-name: "github-actions"
           commit-message: "Auto-sync frontend from monorepo"
           create-target-branch-if-needed: true
-          target-directory: "."  # 🔥 Copia .github correctamente
+          target-directory: ""   # destino raíz del repo
 
-      # ─────────────────────────────────────────────
-      # Empujar BACKEND
-      # ─────────────────────────────────────────────
-      - name: Push Backend to separate repo
+      # ======================================================
+      # BACKEND
+      # ======================================================
+      - name: Prepare BACKEND export
+        run: |
+          mkdir export-backend
+          cp -r services/* export-backend/
+          cp -r services/.github export-backend/.github 2>/dev/null || true
+
+      - name: Push BACKEND to external repo
         uses: cpina/github-action-push-to-another-repository@main
         env:
           API_TOKEN_GITHUB: ${{ secrets.SPLIT_PUSH_TOKEN }}
         with:
-          source-directory: "services"
+          source-directory: "export-backend"
           destination-github-username: "proyecto-nube"
           destination-repository-name: "PetTrack-Back"
           target-branch: "main"
@@ -49,4 +61,4 @@ jobs:
           user-name: "github-actions"
           commit-message: "Auto-sync backend from monorepo"
           create-target-branch-if-needed: true
-          target-directory: "."  # 🔥 Copia .github correctamente
+          target-directory: ""

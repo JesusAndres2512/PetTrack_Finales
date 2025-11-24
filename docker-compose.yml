@@ -11,12 +11,11 @@ services:
       - "8000:8000"
     volumes:
       - ./services/auth-service:/app
-      - ./certs/BaltimoreCyberTrustRoot.pem:/etc/ssl/certs/BaltimoreCyberTrustRoot.pem:ro
+      - ./certs/BaltimoreCyberTrustRoot.pem:/app/BaltimoreCyberTrustRoot.pem:ro
     restart: always
     networks:
       - backend
 
-  # === PETS SERVICE ===
   pets-service:
     build: ./services/pets-service
     container_name: pets_service
@@ -26,12 +25,11 @@ services:
       - "8001:8000"
     volumes:
       - ./services/pets-service:/app
-      - ./certs/BaltimoreCyberTrustRoot.pem:/etc/ssl/certs/BaltimoreCyberTrustRoot.pem:ro
+      - ./certs/BaltimoreCyberTrustRoot.pem:/app/BaltimoreCyberTrustRoot.pem:ro
     restart: always
     networks:
       - backend
 
-  # === APPOINTMENTS SERVICE ===
   appointment-service:
     build: ./services/appointment-service
     container_name: appointment_service
@@ -41,12 +39,11 @@ services:
       - "8002:8000"
     volumes:
       - ./services/appointment-service:/app
-      - ./certs/BaltimoreCyberTrustRoot.pem:/etc/ssl/certs/BaltimoreCyberTrustRoot.pem:ro
+      - ./certs/BaltimoreCyberTrustRoot.pem:/app/BaltimoreCyberTrustRoot.pem:ro
     restart: always
     networks:
       - backend
 
-  # === REWARDS SERVICE ===
   rewards-service:
     build: ./services/rewards-service
     container_name: rewards_service
@@ -56,12 +53,11 @@ services:
       - "8004:8000"
     volumes:
       - ./services/rewards-service:/app
-      - ./certs/BaltimoreCyberTrustRoot.pem:/etc/ssl/certs/BaltimoreCyberTrustRoot.pem:ro
+      - ./certs/BaltimoreCyberTrustRoot.pem:/app/BaltimoreCyberTrustRoot.pem:ro
     restart: always
     networks:
       - backend
 
-  # === POSTCONSULT SERVICE ===
   postconsult-service:
     build: ./services/postconsult-service
     container_name: postconsult_service
@@ -71,12 +67,11 @@ services:
       - "8005:8000"
     volumes:
       - ./services/postconsult-service:/app
-      - ./certs/BaltimoreCyberTrustRoot.pem:/etc/ssl/certs/BaltimoreCyberTrustRoot.pem:ro
+      - ./certs/BaltimoreCyberTrustRoot.pem:/app/BaltimoreCyberTrustRoot.pem:ro
     restart: always
     networks:
       - backend
 
-  # === API GATEWAY ===
   api-gateway:
     build: ./services/api-gateway
     container_name: api_gateway
@@ -100,7 +95,6 @@ services:
     networks:
       - backend
 
-  # === WEB CLIENT ===
   client:
     build: ./clients/web-client
     container_name: web_client
@@ -114,12 +108,10 @@ services:
     networks:
       - backend
 
-# === NETWORKS ===
 networks:
   backend:
     driver: bridge
 
-# === VOLUMES ===
 volumes:
   auth_data:
   pets_data:

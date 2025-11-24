@@ -45,9 +45,6 @@ jobs:
         echo "${{ secrets.ENV_POSTCONSULT_SERVICE }}" > services/postconsult-service/.env
         echo "${{ secrets.ENV_WEB_CLIENT }}" > clients/web-client/.env
 
-        echo "${{ secrets.AZURE_CA_CERT }}" > certs/BaltimoreCyberTrustRoot.pem
-        echo "✅ Archivos .env y certificado listos."
-
     # ================================
     # 🐳 Login al Azure Container Registry
     # ================================

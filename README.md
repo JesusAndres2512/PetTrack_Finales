@@ -74,7 +74,7 @@ PetTrack/
 ## 
 ---
 
-## ⚙️ Comandos para Levantar Todos los Servicios
+## ⚙️ Comandos para Levantar Todos los Servicios.
 
 ### 1. Construir y levantar toda la aplicación:
 

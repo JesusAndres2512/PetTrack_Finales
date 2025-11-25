@@ -1,0 +1,122 @@
+# =========================
+# 🐍 PYTHON / FASTAPI
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.egg-info/
+*.log
+*.pot
+*.mo
+
+# Entornos virtuales
+venv/
+.env
+.env.*
+*.env
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Archivos temporales / caché
+*.sqlite3
+instance/
+.pytest_cache/
+.coverage
+htmlcov/
+.cache/
+.mypy_cache/
+.dmypy.json
+pytestdebug.log
+
+# =========================
+# 🧰 DOCKER / COMPOSE
+# =========================
+docker/volumes/
+docker/data/
+*.pid
+*.seed
+*.pid.lock
+
+# Archivos generados por docker-compose
+**/compose.override.yml
+**/compose.local.yml
+
+# =========================
+# ⚙️ NODE / FRONTEND (React, Vue, Vite)
+# =========================
+node_modules/
+dist/
+build/
+.cache/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Vite
+vite-env.d.ts
+
+# =========================
+# IDE / Editor
+# =========================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Archivos de configuración locales
+*.local
+*.DS_Store
+Thumbs.db
+
+# =========================
+# 🧪 TESTS / DOCUMENTACIÓN
+# =========================
+coverage/
+tests/__pycache__/
+docs/_build/
+
+# =========================
+# 🔒 CONFIGURACIONES SENSIBLES
+# =========================
+# Clausula muy importante:
+# EXCLUYE TODO, PERO PERMITE CERTS DEL PROYECTO
+
+secret_key.txt
+private.key
+public.key
+
+# No ignorar certificados del repo (Azure necesita copiarlos en el build)
+!certs/
+!certs/*.pem
+!certs/*.crt
+
+# =========================
+# 🚫 GIT / SISTEMAS
+# =========================
+.git/
+.gitmodules
+.gitattributes
+
+# =========================
+# ⚙️ GITHUB ACTIONS
+# =========================
+!.github/workflows/*.yml
+
+# =========================
+# 💻 SISTEMA OPERATIVO
+# =========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================
+# LOGS / TEMP
+# =========================
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak

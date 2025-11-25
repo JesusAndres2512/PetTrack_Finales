@@ -3,67 +3,82 @@ version: "3.9"
 services:
   # === AUTH SERVICE ===
   auth-service:
-    image: ${ACR_LOGIN_SERVER}/pettrack-auth-service:latest
+    build: ./services/auth-service
     container_name: auth_service
     env_file:
       - ./services/auth-service/.env
     ports:
       - "8000:8000"
+    volumes:
+      - ./services/auth-service:/app
+      - ./certs/BaltimoreCyberTrustRoot.pem:/etc/ssl/certs/BaltimoreCyberTrustRoot.pem:ro
     restart: always
     networks:
       - backend
 
   # === PETS SERVICE ===
   pets-service:
-    image: ${ACR_LOGIN_SERVER}/pettrack-pets-service:latest
+    build: ./services/pets-service
     container_name: pets_service
     env_file:
       - ./services/pets-service/.env
     ports:
       - "8001:8000"
+    volumes:
+      - ./services/pets-service:/app
+      - ./certs/BaltimoreCyberTrustRoot.pem:/etc/ssl/certs/BaltimoreCyberTrustRoot.pem:ro
     restart: always
     networks:
       - backend
 
   # === APPOINTMENTS SERVICE ===
   appointment-service:
-    image: ${ACR_LOGIN_SERVER}/pettrack-appointment-service:latest
+    build: ./services/appointment-service
     container_name: appointment_service
     env_file:
       - ./services/appointment-service/.env
     ports:
       - "8002:8000"
+    volumes:
+      - ./services/appointment-service:/app
+      - ./certs/BaltimoreCyberTrustRoot.pem:/etc/ssl/certs/BaltimoreCyberTrustRoot.pem:ro
     restart: always
     networks:
       - backend
 
   # === REWARDS SERVICE ===
   rewards-service:
-    image: ${ACR_LOGIN_SERVER}/pettrack-rewards-service:latest
+    build: ./services/rewards-service
     container_name: rewards_service
     env_file:
       - ./services/rewards-service/.env
     ports:
       - "8004:8000"
+    volumes:
+      - ./services/rewards-service:/app
+      - ./certs/BaltimoreCyberTrustRoot.pem:/etc/ssl/certs/BaltimoreCyberTrustRoot.pem:ro
     restart: always
     networks:
       - backend
 
   # === POSTCONSULT SERVICE ===
   postconsult-service:
-    image: ${ACR_LOGIN_SERVER}/pettrack-postconsult-service:latest
+    build: ./services/postconsult-service
     container_name: postconsult_service
     env_file:
       - ./services/postconsult-service/.env
     ports:
       - "8005:8000"
+    volumes:
+      - ./services/postconsult-service:/app
+      - ./certs/BaltimoreCyberTrustRoot.pem:/etc/ssl/certs/BaltimoreCyberTrustRoot.pem:ro
     restart: always
     networks:
       - backend
 
   # === API GATEWAY ===
   api-gateway:
-    image: ${ACR_LOGIN_SERVER}/pettrack-api-gateway:latest
+    build: ./services/api-gateway
     container_name: api_gateway
     ports:
       - "8003:8003"
@@ -87,17 +102,14 @@ services:
 
   # === WEB CLIENT ===
   client:
-    image: ${ACR_LOGIN_SERVER}/pettrack-web-client:latest
+    build: ./clients/web-client
     container_name: web_client
     ports:
       - "80:80"
-    env_file:
-      - ./clients/web-client/.env
     depends_on:
       - api-gateway
     environment:
       VITE_API_GATEWAY: "http://api-gateway:8003"
-      VITE_API_APIM_URL: "https://pettrack-apim.azure-api.net"
     restart: always
     networks:
       - backend

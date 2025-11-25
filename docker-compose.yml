@@ -9,9 +9,6 @@ services:
       - ./services/auth-service/.env
     ports:
       - "8000:8000"
-    volumes:
-      - ./services/auth-service:/app
-      - ./certs/BaltimoreCyberTrustRoot.pem:/etc/ssl/certs/BaltimoreCyberTrustRoot.pem:ro
     restart: always
     networks:
       - backend

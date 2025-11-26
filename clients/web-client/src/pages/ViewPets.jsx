@@ -1,7 +1,7 @@
 // src/pages/ViewPets.jsx
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar.jsx";
-import { getPets } from "../api/petsService";
+import { getPets } from "../api/pets.js";
 
 export default function ViewPets() {
   const [pets, setPets] = useState([]);

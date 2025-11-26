@@ -1,7 +1,7 @@
 // src/pages/ViewAppointments.jsx
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar.jsx";
-import { getAppointments } from "../api/appointmentsService";
+import { getAppointments } from "../api/appointments.js";
 
 export default function ViewAppointments() {
   const [appointments, setAppointments] = useState([]);

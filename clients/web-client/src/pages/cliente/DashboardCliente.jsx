@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Sidebar.jsx";
-import { getPets } from "../../api/apiClient.js";
+import { getPets } from "../../api/pets.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 
 export default function DashboardCliente() {

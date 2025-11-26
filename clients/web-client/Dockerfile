@@ -5,14 +5,23 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
-# Copiar e instalar dependencias (con cache inteligente)
+# Copiar dependencias e instalarlas
 COPY package*.json ./
 RUN npm ci --silent
 
-# Copiar el resto del código
+# Copiar código fuente
 COPY . .
 
-# Compilar el proyecto para producción
+# ✅ Inyectar variables de entorno necesarias para el build
+# (agrégalas todas las que use import.meta.env en tu proyecto)
+ARG VITE_API_APIM_URL
+
+ENV VITE_API_APIM_URL=$VITE_API_APIM_URL
+
+# ✅ Verificar que las variables llegaron (opcional pero útil para debug)
+RUN echo "VITE_API_APIM_URL=$VITE_API_APIM_URL" 
+
+# Ejecutar build
 RUN npm run build
 
 # =============================
@@ -20,16 +29,15 @@ RUN npm run build
 # =============================
 FROM nginx:1.25-alpine
 
-# Elimina archivos por defecto de Nginx
+# Limpiar contenido por defecto de Nginx
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copiar los archivos generados en la etapa de build
+# Copiar build generado
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copiar configuración personalizada de Nginx
+# Copiar configuración Nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
-# Comando de inicio
 CMD ["nginx", "-g", "daemon off;"]

@@ -24,8 +24,9 @@ import ViewUsers from "../pages/ViewUsers.jsx";
 import ViewPets from "../pages/ViewPets.jsx";
 import ViewAppointments from "../pages/ViewAppointments.jsx";
 
-// ProtectedRoute
+// Rutas protegidas
 import ProtectedRoute from "../components/ProtectedRoute.jsx";
+import DashboardRouter from "./DashboardRouter.jsx";
 
 export default function AppRouter() {
   return (
@@ -40,7 +41,9 @@ export default function AppRouter() {
       {/* USER */}
       <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
         <Route path="/user/menu" element={<MenuCliente />} />
-        <Route path="/user/dashboard" element={<DashboardCliente />} />
+        <Route element={<DashboardRouter allowedRoles={["user"]} />}>
+          <Route path="/user/dashboard" element={<DashboardCliente />} />
+        </Route>
         <Route path="/user/mascotas" element={<MascotasView />} />
         <Route path="/user/citas" element={<CitasClienteView />} />
         <Route path="/user/rewards" element={<RewardsUsers />} />
@@ -49,7 +52,9 @@ export default function AppRouter() {
       {/* DOCTOR */}
       <Route element={<ProtectedRoute allowedRoles={["doctor"]} />}>
         <Route path="/doctor/menu" element={<MenuDoctor />} />
-        <Route path="/doctor/dashboard" element={<DashboardDoctor />} />
+        <Route element={<DashboardRouter allowedRoles={["doctor"]} />}>
+          <Route path="/doctor/dashboard" element={<DashboardDoctor />} />
+        </Route>
         <Route path="/doctor/citas" element={<CitasDoctorView />} />
         <Route path="/doctor/seguimiento" element={<SeguimientoView />} />
       </Route>
@@ -57,7 +62,9 @@ export default function AppRouter() {
       {/* ADMIN */}
       <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
         <Route path="/admin/menu" element={<MenuAdmin />} />
-        <Route path="/admin/dashboard" element={<DashboardAdmin />} />
+        <Route element={<DashboardRouter allowedRoles={["admin"]} />}>
+          <Route path="/admin/dashboard" element={<DashboardAdmin />} />
+        </Route>
         <Route path="/admin/users" element={<ViewUsers />} />
         <Route path="/admin/pets" element={<ViewPets />} />
         <Route path="/admin/appointments" element={<ViewAppointments />} />

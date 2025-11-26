@@ -12,14 +12,12 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [loading, setLoading] = useState(true);
 
-  // Mapear rol a ruta segura
   const rolePathMap = {
     admin: "/admin/dashboard",
     doctor: "/doctor/dashboard",
     user: "/user/dashboard",
   };
 
-  // Cargar perfil si hay token
   useEffect(() => {
     const fetchProfile = async () => {
       if (!token) {
@@ -29,18 +27,14 @@ export const AuthProvider = ({ children }) => {
 
       try {
         const data = await getProfileService();
-        const userRole = data.role || "user"; // fallback seguro
+        const userRole = data.role || "user";
+
         setUser({
           id: data.user_id || "unknown",
           username: data.username || "user",
           role: userRole,
         });
         localStorage.setItem("role", userRole);
-
-        // Redirigir automáticamente al dashboard si estamos en la raíz
-        if (window.location.pathname === "/") {
-          navigate(rolePathMap[userRole] || "/login", { replace: true });
-        }
       } catch {
         logout();
       } finally {
@@ -49,24 +43,25 @@ export const AuthProvider = ({ children }) => {
     };
 
     fetchProfile();
-  }, [token, navigate]);
+  }, [token]);
 
   const login = async ({ username, password }) => {
     try {
       const data = await loginService({ username, password });
       const userRole = data.role || "user";
+
       setToken(data.access_token);
       localStorage.setItem("token", data.access_token);
       localStorage.setItem("role", userRole);
+
       setUser({
         id: data.user_id || "unknown",
         username,
         role: userRole,
       });
 
-      // Redirección segura usando React Router
+      // Navega al dashboard correcto solo desde aquí
       navigate(rolePathMap[userRole] || "/login", { replace: true });
-
       return data;
     } catch (err) {
       throw err.response?.data || { detail: "Error al iniciar sesión" };

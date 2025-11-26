@@ -4,7 +4,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import LoginView from "../pages/auth/LoginView.jsx";
 import RegisterView from "../pages/auth/RegisterView.jsx";
 
-// CLIENTE (USER)
+// USER
 import MenuCliente from "../pages/cliente/MenuCliente.jsx";
 import DashboardCliente from "../pages/cliente/DashboardCliente.jsx";
 import MascotasView from "../pages/cliente/MascotasView.jsx";
@@ -31,10 +31,8 @@ import DashboardRouter from "./DashboardRouter.jsx";
 export default function AppRouter() {
   return (
     <Routes>
-      {/* Redirección raíz */}
       <Route path="/" element={<Navigate to="/login" replace />} />
 
-      {/* Auth */}
       <Route path="/login" element={<LoginView />} />
       <Route path="/register" element={<RegisterView />} />
 
@@ -70,7 +68,6 @@ export default function AppRouter() {
         <Route path="/admin/appointments" element={<ViewAppointments />} />
       </Route>
 
-      {/* Página no encontrada */}
       <Route
         path="*"
         element={<div className="p-8 text-center text-gray-600">Página no encontrada</div>}

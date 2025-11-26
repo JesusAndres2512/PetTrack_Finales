@@ -10,7 +10,14 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [loading, setLoading] = useState(true);
 
-  // 🔹 Cargar perfil si hay token y manejar reload
+  // Mapear rol a ruta segura
+  const rolePathMap = {
+    admin: "/admin/dashboard",
+    doctor: "/doctor/dashboard",
+    user: "/user/dashboard",
+  };
+
+  // Cargar perfil si hay token
   useEffect(() => {
     const fetchProfile = async () => {
       if (!token) {
@@ -20,8 +27,7 @@ export const AuthProvider = ({ children }) => {
 
       try {
         const data = await getProfileService();
-        // Asegurar role por defecto
-        const userRole = data.role || "user";
+        const userRole = data.role || "user"; // fallback seguro
         setUser({
           id: data.user_id || "unknown",
           username: data.username || "user",
@@ -29,12 +35,9 @@ export const AuthProvider = ({ children }) => {
         });
         localStorage.setItem("role", userRole);
 
-        // Redirección automática si está en /login o root
-        if (
-          window.location.pathname === "/login" ||
-          window.location.pathname === "/"
-        ) {
-          window.location.href = `/dashboard/${userRole}`;
+        // Redirigir automáticamente al dashboard correcto si estamos en la raíz
+        if (window.location.pathname === "/") {
+          window.location.href = rolePathMap[userRole] || "/login";
         }
       } catch {
         logout();
@@ -46,7 +49,6 @@ export const AuthProvider = ({ children }) => {
     fetchProfile();
   }, [token]);
 
-  // 🔹 Login seguro con redirección
   const login = async ({ username, password }) => {
     try {
       const data = await loginService({ username, password });
@@ -61,7 +63,8 @@ export const AuthProvider = ({ children }) => {
       });
 
       // Redirección segura por rol
-      window.location.href = `/dashboard/${userRole}`;
+      const path = rolePathMap[userRole] || "/login";
+      window.location.href = path;
 
       return data;
     } catch (err) {
@@ -69,7 +72,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // 🔹 Logout
   const logout = () => {
     setUser(null);
     setToken("");

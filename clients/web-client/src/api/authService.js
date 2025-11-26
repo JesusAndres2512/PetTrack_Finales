@@ -1,8 +1,13 @@
 // src/services/authService.js
-import axios from "axios";
-const API_URL = import.meta.env.VITE_API_APIM_URL;
+import apiClient from "../api/apiClient";
 
-export const login = async (data) => (await axios.post(`${API_URL}/login`, data)).data;
-export const register = async (data) => (await axios.post(`${API_URL}/register`, data)).data;
-export const getUsers = async () => (await axios.get(`${API_URL}/users`)).data; // agregar endpoint /users en el auth-service
+// Rutas consistentes con APIM/backend
+export const loginService = (payload) => apiClient.post("/auth/login", payload).then(r => r.data);
+export const registerService = (payload) => apiClient.post("/auth/register", payload).then(r => r.data);
+export const getUsersService = () => apiClient.get("/auth/users").then(r => r.data);
+export const getProfileService = () => apiClient.get("/auth/profile").then(r => r.data);
 
+export const logoutService = () => {
+  localStorage.clear();
+  window.location.href = "/login";
+};

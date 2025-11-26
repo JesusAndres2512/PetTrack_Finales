@@ -1,18 +1,48 @@
-import { authClient } from "./apiClient";
+import apiClient from "./apiClient";
 
-export const login = async (email, password) => {
-  const { data } = await authClient.post("/auth/login", { email, password });
-  return data;
+// =============================
+// 🧩 Autenticación
+// =============================
+
+export const login = async (username, password) => {
+  try {
+    const { data } = await apiClient.post("/auth/login", { username, password });
+
+    if (data.access_token) {
+      localStorage.setItem("token", data.access_token);
+    }
+
+    if (data.role) {
+      localStorage.setItem("role", data.role);
+    }
+
+    return data;
+  } catch (err) {
+    throw err.response?.data || { detail: "Error al iniciar sesión" };
+  }
 };
 
-export const register = async (user) => {
-  const { data } = await authClient.post("/auth/register", user);
-  return data;
+export const register = async ({ username, email, password, role }) => {
+  try {
+    const { data } = await apiClient.post("/auth/register", {
+      username,
+      email,
+      password,
+      role,
+    });
+    return data;
+  } catch (err) {
+    throw err.response?.data || { detail: "Error al registrar usuario" };
+  }
 };
 
-export const getProfile = async (token) => {
-  const { data } = await authClient.get("/auth/profile", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return data;
+export const getProfile = async () => {
+  try {
+    const { data } = await apiClient.get("/auth/profile");
+    return data;
+  } catch (err) {
+    throw err.response?.data || { detail: "Error al obtener perfil" };
+  }
 };
+
+export const getStoredRole = () => localStorage.getItem("role") || "user";

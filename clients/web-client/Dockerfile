@@ -12,17 +12,17 @@ RUN npm ci --silent
 # Copiar código fuente
 COPY . .
 
-# ✅ Inyectar variables de entorno necesarias para el build
-# (agrégalas todas las que use import.meta.env en tu proyecto)
+# =============================
+# Pasar variables de entorno de Vite en tiempo de build
+# =============================
 ARG VITE_API_APIM_URL
-
 ENV VITE_API_APIM_URL=$VITE_API_APIM_URL
 
-# ✅ Verificar que las variables llegaron (opcional pero útil para debug)
-RUN echo "VITE_API_APIM_URL=$VITE_API_APIM_URL" 
+# Verificar que la variable llegó (opcional)
+RUN echo "VITE_API_APIM_URL=$VITE_API_APIM_URL"
 
-# Ejecutar build
-RUN npm run build
+# Ejecutar build con la variable inyectada
+RUN VITE_API_APIM_URL=$VITE_API_APIM_URL npm run build
 
 # =============================
 # Etapa 2: Servir con Nginx
@@ -32,10 +32,10 @@ FROM nginx:1.25-alpine
 # Limpiar contenido por defecto de Nginx
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copiar build generado
+# Copiar build generado desde la etapa anterior
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copiar configuración Nginx
+# Copiar configuración Nginx personalizada (si tienes)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80

@@ -1,7 +1,6 @@
 // src/context/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { login as apiLogin } from "../services/authService"; // ✅ Import correcto
-import { getProfileService as getProfile } from "../services/authService"; // ✅ Import correcto
+import { loginService as apiLogin, getProfileService as getProfile } from "../services/authService.js";
 
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
@@ -11,6 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [loading, setLoading] = useState(true);
 
+  // 🔹 Cargar perfil si hay token
   useEffect(() => {
     const fetchProfile = async () => {
       if (!token) {
@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
     fetchProfile();
   }, [token]);
 
-  const login = async (username, password) => {
+  const login = async ({ username, password }) => {
     const data = await apiLogin({ username, password });
     setToken(data.access_token);
     localStorage.setItem("token", data.access_token);

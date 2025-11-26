@@ -16,7 +16,7 @@ COPY . .
 # Pasar variables de entorno de Vite en tiempo de build
 # =============================
 ARG VITE_API_APIM_URL
-ENV VITE_API_APIM_URL=$VITE_API_APIM_URL
+ENV VITE_API_APIM_URL=https://pettrack-apim.azure-api.net
 
 # Verificar que la variable llegó (opcional)
 RUN echo "VITE_API_APIM_URL=$VITE_API_APIM_URL"

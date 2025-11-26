@@ -9,7 +9,7 @@ import MenuCliente from "../pages/cliente/MenuCliente.jsx";
 import DashboardCliente from "../pages/cliente/DashboardCliente.jsx";
 import MascotasView from "../pages/cliente/MascotasView.jsx";
 import CitasClienteView from "../pages/cliente/CitasClienteView.jsx";
-import Recompensas from '../pages/RewardsUsers.jsx';
+import RewardsUsers from "../pages/RewardsUsers.jsx";
 
 // DOCTOR
 import MenuDoctor from "../pages/doctor/MenuDoctor.jsx";
@@ -20,15 +20,12 @@ import SeguimientoView from "../pages/doctor/SeguimientoView.jsx";
 // ADMIN
 import MenuAdmin from "../pages/admin/MenuAdmin.jsx";
 import DashboardAdmin from "../pages/admin/DashboardAdmin.jsx";
-
-// ADMIN views
 import ViewUsers from "../pages/ViewUsers.jsx";
 import ViewPets from "../pages/ViewPets.jsx";
 import ViewAppointments from "../pages/ViewAppointments.jsx";
 
 // ProtectedRoute
 import ProtectedRoute from "../components/ProtectedRoute.jsx";
-import RewardsUsers from "../pages/RewardsUsers.jsx";
 
 export default function AppRouter() {
   return (
@@ -47,7 +44,6 @@ export default function AppRouter() {
         <Route path="/user/mascotas" element={<MascotasView />} />
         <Route path="/user/citas" element={<CitasClienteView />} />
         <Route path="/user/rewards" element={<RewardsUsers />} />
-
       </Route>
 
       {/* DOCTOR */}

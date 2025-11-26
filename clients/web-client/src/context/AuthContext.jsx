@@ -1,11 +1,13 @@
 // src/context/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { loginService, getProfileService } from "../api/authService.js";
 
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [loading, setLoading] = useState(true);
@@ -35,9 +37,9 @@ export const AuthProvider = ({ children }) => {
         });
         localStorage.setItem("role", userRole);
 
-        // Redirigir automáticamente al dashboard correcto si estamos en la raíz
+        // Redirigir automáticamente al dashboard si estamos en la raíz
         if (window.location.pathname === "/") {
-          window.location.href = rolePathMap[userRole] || "/login";
+          navigate(rolePathMap[userRole] || "/login", { replace: true });
         }
       } catch {
         logout();
@@ -47,12 +49,12 @@ export const AuthProvider = ({ children }) => {
     };
 
     fetchProfile();
-  }, [token]);
+  }, [token, navigate]);
 
   const login = async ({ username, password }) => {
     try {
       const data = await loginService({ username, password });
-      const userRole = data.role || "user"; // fallback seguro
+      const userRole = data.role || "user";
       setToken(data.access_token);
       localStorage.setItem("token", data.access_token);
       localStorage.setItem("role", userRole);
@@ -62,9 +64,8 @@ export const AuthProvider = ({ children }) => {
         role: userRole,
       });
 
-      // Redirección segura por rol
-      const path = rolePathMap[userRole] || "/login";
-      window.location.href = path;
+      // Redirección segura usando React Router
+      navigate(rolePathMap[userRole] || "/login", { replace: true });
 
       return data;
     } catch (err) {
@@ -76,7 +77,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setToken("");
     localStorage.clear();
-    window.location.href = "/login";
+    navigate("/login", { replace: true });
   };
 
   return (

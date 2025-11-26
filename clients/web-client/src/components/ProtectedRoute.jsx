@@ -9,23 +9,31 @@ import { useAuth } from "../context/AuthContext.jsx";
  * - allowedRoles: array de roles permitidos
  * Comportamiento:
  * - Si no hay usuario → redirige a /login
- * - Si el usuario no tiene un rol permitido → redirige a su dashboard
+ * - Si el usuario no tiene un rol permitido → redirige a su dashboard seguro
  * - Si el usuario tiene rol permitido → renderiza <Outlet />
  */
 export default function ProtectedRoute({ allowedRoles = [] }) {
   const { user, loading } = useAuth();
 
-  // 🔹 Mientras carga el usuario (token en localStorage), mostramos null o spinner
+  // 🔹 Mientras se carga el usuario (token/role), podemos mostrar un spinner o null
   if (loading) return null;
 
-  // 🔹 Si no hay usuario autenticado, redirige a login
+  // 🔹 Usuario no autenticado → login
   if (!user) return <Navigate to="/login" replace />;
 
-  // 🔹 Si el rol del usuario no está permitido, redirige a su dashboard
+  // 🔹 Map de roles a rutas seguras
+  const rolePathMap = {
+    admin: "/admin/dashboard",
+    doctor: "/doctor/dashboard",
+    user: "/user/dashboard",
+  };
+
+  // 🔹 Usuario autenticado pero rol no permitido → redirige a su dashboard seguro
   if (allowedRoles.length && !allowedRoles.includes(user.role)) {
-    return <Navigate to={`/dashboard/${user.role}`} replace />;
+    const safePath = rolePathMap[user.role] || "/login";
+    return <Navigate to={safePath} replace />;
   }
 
-  // 🔹 Usuario autorizado, renderiza la ruta protegida
+  // 🔹 Usuario autorizado → renderiza la ruta protegida
   return <Outlet />;
 }

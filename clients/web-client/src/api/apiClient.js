@@ -8,25 +8,27 @@ const apiClient = axios.create({
 });
 
 // =============================
-// 🔒 Interceptor JWT
+// 🔒 Interceptor JWT (inyectar token en cada request)
 // =============================
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => Promise.reject(error)
 );
 
 // =============================
-// ⚠️ Interceptor de Respuesta
+// ⚠️ Interceptor de respuesta (cerrar sesión en 401)
 // =============================
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem("token");
+      localStorage.clear();
       window.location.href = "/login";
     }
     return Promise.reject(error);
@@ -34,12 +36,20 @@ apiClient.interceptors.response.use(
 );
 
 // =============================
-// 🧩 AUTENTICACIÓN
+// 🧩 Autenticación
 // =============================
 export const login = async (username, password) => {
   try {
     const { data } = await apiClient.post("/auth/login", { username, password });
-    if (data.access_token) localStorage.setItem("token", data.access_token);
+
+    if (data.access_token) {
+      localStorage.setItem("token", data.access_token);
+    }
+
+    if (data.role) {
+      localStorage.setItem("role", data.role);
+    }
+
     return data;
   } catch (error) {
     throw error.response?.data || { detail: "Error al iniciar sesión" };
@@ -69,6 +79,9 @@ export const getProfile = async () => {
   }
 };
 
+// =============================
+// 👥 Gestión de usuarios (admin)
+// =============================
 export const getUsers = async () => {
   try {
     const { data } = await apiClient.get("/auth/users");
@@ -78,7 +91,6 @@ export const getUsers = async () => {
   }
 };
 
-// 🧑‍💼 Eliminar usuario (solo admin)
 export const deleteUser = async (userId) => {
   try {
     const { data } = await apiClient.delete(`/auth/users/${userId}`);
@@ -88,7 +100,6 @@ export const deleteUser = async (userId) => {
   }
 };
 
-// ✏️ Actualizar usuario (solo admin)
 export const updateUser = async (userId, updatedData) => {
   try {
     const { data } = await apiClient.put(`/auth/users/${userId}`, updatedData);
@@ -99,7 +110,7 @@ export const updateUser = async (userId, updatedData) => {
 };
 
 // =============================
-// 🐶 MASCOTAS
+// 🐾 Módulo Mascotas
 // =============================
 export const getPets = async () => {
   try {
@@ -120,7 +131,7 @@ export const addPet = async (petData) => {
 };
 
 // =============================
-// 📅 CITAS
+// 📅 Módulo Citas
 // =============================
 export const getAppointments = async () => {
   try {
@@ -141,7 +152,7 @@ export const addAppointment = async (appointmentData) => {
 };
 
 // =============================
-// 📊 DASHBOARD
+// 📊 Dashboard
 // =============================
 export const getDashboard = async () => {
   try {
@@ -151,5 +162,7 @@ export const getDashboard = async () => {
     throw error.response?.data || { detail: "Error al obtener datos del dashboard" };
   }
 };
+
+export const getStoredRole = () => localStorage.getItem("role") || "user";
 
 export default apiClient;

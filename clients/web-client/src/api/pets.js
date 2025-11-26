@@ -1,11 +1,17 @@
-import { petsClient } from "./apiClient";
+import apiClient from "./apiClient";
 
 export const getPets = async () => {
-  const { data } = await petsClient.get("/pets");
-  return data;
+  try {
+    return (await apiClient.get("/pets")).data;
+  } catch (err) {
+    throw err.response?.data || { detail: "Error al obtener mascotas" };
+  }
 };
 
 export const createPet = async (pet) => {
-  const { data } = await petsClient.post("/pets", pet);
-  return data;
+  try {
+    return (await apiClient.post("/pets", pet)).data;
+  } catch (err) {
+    throw err.response?.data || { detail: "Error al crear mascota" };
+  }
 };

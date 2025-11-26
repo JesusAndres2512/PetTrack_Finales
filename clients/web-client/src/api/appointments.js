@@ -1,11 +1,17 @@
-import { appointmentsClient } from "./apiClient";
+import apiClient from "./apiClient";
 
 export const getAppointments = async () => {
-  const { data } = await appointmentsClient.get("/appointments");
-  return data;
+  try {
+    return (await apiClient.get("/appointments")).data;
+  } catch (err) {
+    throw err.response?.data || { detail: "Error al obtener citas" };
+  }
 };
 
 export const createAppointment = async (appointment) => {
-  const { data } = await appointmentsClient.post("/appointments", appointment);
-  return data;
+  try {
+    return (await apiClient.post("/appointments", appointment)).data;
+  } catch (err) {
+    throw err.response?.data || { detail: "Error al crear cita" };
+  }
 };

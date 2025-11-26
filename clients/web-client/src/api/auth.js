@@ -1,21 +1,13 @@
-import apiClient from "./apiClient";
+import apiClient from "../api/apiClient";
 
 // =============================
 // 🧩 Autenticación
 // =============================
-
 export const login = async (username, password) => {
   try {
     const { data } = await apiClient.post("/auth/login", { username, password });
-
-    if (data.access_token) {
-      localStorage.setItem("token", data.access_token);
-    }
-
-    if (data.role) {
-      localStorage.setItem("role", data.role);
-    }
-
+    if (data.access_token) localStorage.setItem("token", data.access_token);
+    if (data.role) localStorage.setItem("role", data.role);
     return data;
   } catch (err) {
     throw err.response?.data || { detail: "Error al iniciar sesión" };
@@ -24,12 +16,7 @@ export const login = async (username, password) => {
 
 export const register = async ({ username, email, password, role }) => {
   try {
-    const { data } = await apiClient.post("/auth/register", {
-      username,
-      email,
-      password,
-      role,
-    });
+    const { data } = await apiClient.post("/auth/register", { username, email, password, role });
     return data;
   } catch (err) {
     throw err.response?.data || { detail: "Error al registrar usuario" };
@@ -38,11 +25,11 @@ export const register = async ({ username, email, password, role }) => {
 
 export const getProfile = async () => {
   try {
-    const { data } = await apiClient.get("/auth/profile");
-    return data;
+    return (await apiClient.get("/auth/profile")).data;
   } catch (err) {
     throw err.response?.data || { detail: "Error al obtener perfil" };
   }
 };
 
 export const getStoredRole = () => localStorage.getItem("role") || "user";
+export const logout = () => { localStorage.clear(); window.location.href = "/login"; };

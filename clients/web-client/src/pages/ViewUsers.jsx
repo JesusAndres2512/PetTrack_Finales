@@ -1,7 +1,7 @@
 // src/pages/ViewUsers.jsx
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar.jsx";
-import { getUsers, deleteUser, updateUser } from "../api/apiClient.js"; // 🔹 nuevos métodos
+import { getUsers, deleteUser, updateUser } from "../api/auth.js"; // 🔹 nuevos métodos
 
 export default function ViewUsers() {
   const [users, setUsers] = useState([]);

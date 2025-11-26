@@ -33,3 +33,27 @@ export const getProfile = async () => {
 
 export const getStoredRole = () => localStorage.getItem("role") || "user";
 export const logout = () => { localStorage.clear(); window.location.href = "/login"; };
+
+export const getUsers = async () => {
+  try {
+    return (await apiClient.get("/auth/users")).data;
+  } catch (err) {
+    throw err.response?.data || { detail: "Error al obtener usuarios" };
+  }
+};
+
+export const deleteUser = async (id) => {
+  try {
+    await apiClient.delete(`/auth/users/${id}`);
+  } catch (err) {
+    throw err.response?.data || { detail: "Error al eliminar usuario" };
+  }
+};
+
+export const updateUser = async (id, userData) => {
+  try {
+    await apiClient.put(`/auth/users/${id}`, userData);
+  } catch (err) {
+    throw err.response?.data || { detail: "Error al actualizar usuario" };
+  }
+};

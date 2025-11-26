@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [loading, setLoading] = useState(true);
 
-  // Cargar perfil si hay token
+  // 🔹 Cargar perfil si hay token y manejar reload
   useEffect(() => {
     const fetchProfile = async () => {
       if (!token) {
@@ -20,13 +20,22 @@ export const AuthProvider = ({ children }) => {
 
       try {
         const data = await getProfileService();
-        // Aseguramos role por defecto
+        // Asegurar role por defecto
+        const userRole = data.role || "user";
         setUser({
           id: data.user_id || "unknown",
           username: data.username || "user",
-          role: data.role || "user",
+          role: userRole,
         });
-        localStorage.setItem("role", data.role || "user");
+        localStorage.setItem("role", userRole);
+
+        // Redirección automática si está en /login o root
+        if (
+          window.location.pathname === "/login" ||
+          window.location.pathname === "/"
+        ) {
+          window.location.href = `/dashboard/${userRole}`;
+        }
       } catch {
         logout();
       } finally {
@@ -37,6 +46,7 @@ export const AuthProvider = ({ children }) => {
     fetchProfile();
   }, [token]);
 
+  // 🔹 Login seguro con redirección
   const login = async ({ username, password }) => {
     try {
       const data = await loginService({ username, password });
@@ -46,11 +56,11 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("role", userRole);
       setUser({
         id: data.user_id || "unknown",
-        username: username,
+        username,
         role: userRole,
       });
 
-      // 🔹 Redirección segura por rol
+      // Redirección segura por rol
       window.location.href = `/dashboard/${userRole}`;
 
       return data;
@@ -59,6 +69,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // 🔹 Logout
   const logout = () => {
     setUser(null);
     setToken("");

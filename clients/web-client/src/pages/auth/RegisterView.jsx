@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { register } from "../../api/authService.js";
+import { register } from "../../api/auth.js";
 
 export default function RegisterView() {
   const [username, setUsername] = useState("");

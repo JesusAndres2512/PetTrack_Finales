@@ -17,38 +17,38 @@ export const AuthProvider = ({ children }) => {
     user: "/user/dashboard",
   };
 
+  // 🔹 Cargar perfil si hay token
   useEffect(() => {
     const fetchProfile = async () => {
-      console.log("🔍 [AuthContext] Loading profile. Token:", token ? "EXISTE" : "NO EXISTE");
-
       if (!token) {
         setLoading(false);
         return;
       }
 
       try {
+        console.log("🔍 [AuthContext] Loading profile. Token: EXISTE");
+
         const data = await getProfileService(token);
         console.log("👤 [AuthContext] Perfil recibido:", data);
 
-        // Validar que exista rol
-        if (!data.role || !rolePathMap[data.role]) {
-          console.warn("❌ [AuthContext] Rol inválido, cerrando sesión");
-          logout();
-          return;
+        // Detectar rol real según la respuesta
+        const userRole = data.role ?? data.rol;
+        if (!userRole || !rolePathMap[userRole]) {
+          console.warn("❌ [AuthContext] Rol inválido");
+          return; // No cerrar sesión, solo no redirigir
         }
 
-        // Guardar usuario en estado y localStorage
         const userData = {
           id: data.user_id ?? data.id,
-          username: data.username ?? data.email.split("@")[0],
+          username: data.username ?? data.name ?? data.email?.split("@")[0],
           email: data.email,
-          role: data.role,
+          role: userRole,
         };
-        setUser(userData);
-        localStorage.setItem("role", data.role);
 
-        // Redirigir según rol si la ruta actual no coincide
-        const expectedPath = rolePathMap[data.role];
+        setUser(userData);
+        localStorage.setItem("role", userRole);
+
+        const expectedPath = rolePathMap[userRole];
         if (!window.location.pathname.startsWith(expectedPath)) {
           console.log("🚀 [AuthContext] Redirigiendo a dashboard:", expectedPath);
           navigate(expectedPath, { replace: true });
@@ -56,15 +56,15 @@ export const AuthProvider = ({ children }) => {
 
       } catch (err) {
         console.error("❌ [AuthContext] Error obteniendo perfil", err);
-        logout();
       } finally {
         setLoading(false);
       }
     };
 
     fetchProfile();
-  }, [token]);
+  }, [token, navigate]);
 
+  // 🔹 Login
   const login = async ({ username, password }) => {
     try {
       console.log("🔐 [AuthContext] Intentando login...");
@@ -86,7 +86,9 @@ export const AuthProvider = ({ children }) => {
         role: userRole,
       });
 
-      navigate(rolePathMap[userRole], { replace: true });
+      // Redirigir automáticamente al dashboard según rol
+      const expectedPath = rolePathMap[userRole];
+      if (expectedPath) navigate(expectedPath, { replace: true });
 
     } catch (err) {
       console.error("❌ [AuthContext] Error en login:", err);
@@ -94,6 +96,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // 🔹 Logout
   const logout = () => {
     console.log("👋 [AuthContext] Cerrando sesión...");
     setUser(null);

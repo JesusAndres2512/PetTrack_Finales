@@ -18,7 +18,11 @@ export const getProfileService = async (token) => {
   const res = await apiClient.get("/auth/profile", {
     headers: { Authorization: `Bearer ${token}` },
   });
+  console.log("📦 [getProfileService] Respuesta cruda:", res.data);
+  return res.data; // Devuelve tal cual, para no perder información
+};
 
+// 🔹 Actualizar perfil del usuario actual
   const u = res.data;
 
   // Mapear a objeto consistente

@@ -36,19 +36,19 @@ export const AuthProvider = ({ children }) => {
           return;
         }
 
-        setUser({
+        // Guardar usuario en estado y localStorage
+        const userData = {
           id: data.user_id,
           username: data.username,
           email: data.email,
           role: data.role,
-        });
-
+        };
+        setUser(userData);
         localStorage.setItem("role", data.role);
 
         const expectedPath = rolePathMap[data.role];
         const currentPath = window.location.pathname;
 
-        // Redirigir solo si la ruta actual no coincide con el rol
         if (!currentPath.startsWith(expectedPath)) {
           console.log("🚀 [AuthContext] Redirigiendo a dashboard:", expectedPath);
           navigate(expectedPath, { replace: true });
@@ -80,13 +80,14 @@ export const AuthProvider = ({ children }) => {
 
       setUser({
         id: data.user_id,
-        username,
+        username: data.username ?? username,
         email: data.email,
         role: userRole,
       });
 
       navigate(rolePathMap[userRole], { replace: true });
     } catch (err) {
+      console.error("❌ [AuthContext] Error en login:", err);
       throw err.response?.data || { detail: "Error al iniciar sesión" };
     }
   };

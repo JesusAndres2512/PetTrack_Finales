@@ -15,21 +15,36 @@ export const getUsersService = async () =>
 
 // 🔹 Obtener perfil del usuario actual
 export const getProfileService = async (token) => {
-  const res = await apiClient.get("/auth/profile", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  try {
+    console.log("🔍 [getProfileService] Token enviado:", token);
 
-  console.log("📦 [getProfileService] Respuesta cruda:", res.data);
+    const res = await apiClient.get("/auth/profile", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-  return {
-    id: res.data.user_id ?? res.data.id,
-    username: res.data.username ?? res.data.name ?? res.data.email?.split("@")[0],
-    email: res.data.email,
-    role: res.data.role ?? res.data.rol,
-    raw: res.data // opcional, si quieres mantener toda la info original
-  };
+    console.log("📦 [getProfileService] Respuesta cruda:", res.data);
+
+    // Normaliza el perfil
+    return {
+      id: res.data.user_id ?? res.data.id,
+      username: res.data.username ?? res.data.name ?? res.data.email?.split("@")[0],
+      email: res.data.email,
+      role: res.data.role ?? res.data.rol,
+      raw: res.data, // Mantener datos completos
+    };
+  } catch (err) {
+    if (err.response) {
+      console.error(
+        "❌ [getProfileService] Error en response:",
+        err.response.status,
+        err.response.data
+      );
+    } else {
+      console.error("❌ [getProfileService] Error desconocido:", err.message);
+    }
+    throw err; // Re-lanzar para que el contexto de Auth lo capture
+  }
 };
-
 
 // 🔹 Logout
 export const logoutService = () => {

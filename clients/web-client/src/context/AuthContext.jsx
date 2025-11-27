@@ -14,13 +14,12 @@ export const AuthProvider = ({ children }) => {
   const rolePathMap = {
     admin: "/admin/dashboard",
     doctor: "/doctor/dashboard",
-    user: "/dashboard/user",
+    user: "/user/dashboard",
   };
 
   useEffect(() => {
     const fetchProfile = async () => {
       console.log("🔍 [AuthContext] Loading profile. Token:", token ? "EXISTE" : "NO EXISTE");
-
       if (!token) {
         setLoading(false);
         return;
@@ -28,7 +27,6 @@ export const AuthProvider = ({ children }) => {
 
       try {
         const data = await getProfileService(token);
-
         console.log("👤 [AuthContext] Perfil recibido. Rol:", data.role);
 
         if (!data.role || !rolePathMap[data.role]) {
@@ -36,22 +34,15 @@ export const AuthProvider = ({ children }) => {
           return;
         }
 
-        const userData = {
-          id: data.user_id,
-          username: data.username,
-          role: data.role,
-        };
-
-        setUser(userData);
+        setUser({ id: data.user_id, username: data.username, role: data.role });
+        localStorage.setItem("role", data.role);
 
         const expectedPath = rolePathMap[data.role];
         const currentPath = window.location.pathname;
-
         if (!currentPath.startsWith(expectedPath)) {
           console.log("🚀 [AuthContext] Redirecting to:", expectedPath);
           navigate(expectedPath, { replace: true });
         }
-
       } catch (err) {
         console.error("❌ [AuthContext] Error obteniendo perfil", err);
         logout();
@@ -67,24 +58,16 @@ export const AuthProvider = ({ children }) => {
     try {
       console.log("🔐 [AuthContext] Intentando login...");
       const data = await loginService({ username, password });
-
       const userToken = data.access_token;
       const userRole = data.role;
 
       console.log("✅ [AuthContext] Login OK. Rol:", userRole);
-
       setToken(userToken);
       localStorage.setItem("token", userToken);
       localStorage.setItem("role", userRole);
-
-      setUser({
-        id: data.user_id,
-        username,
-        role: userRole,
-      });
+      setUser({ id: data.user_id, username, role: userRole });
 
       navigate(rolePathMap[userRole], { replace: true });
-
     } catch (err) {
       throw err.response?.data || { detail: "Error al iniciar sesión" };
     }

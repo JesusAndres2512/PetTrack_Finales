@@ -1,4 +1,3 @@
-// src/pages/auth/LoginView.jsx
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
@@ -19,13 +18,11 @@ export default function LoginView() {
     }
 
     try {
-      // Solo llamamos al login, él se encarga de redirigir según rol ✅
       await login({ username: username.trim(), password });
+      // ✅ No redirección manual aquí, AuthContext ya maneja rutas según rol
     } catch (err) {
       console.error("Error en login:", err);
-      setError(
-        err.detail || err.response?.data?.detail || "Credenciales inválidas o error en el servidor."
-      );
+      setError(err.detail || err.response?.data?.detail || "Credenciales inválidas o error en el servidor.");
     }
   };
 
@@ -33,9 +30,7 @@ export default function LoginView() {
     <div className="min-h-screen flex items-center justify-center bg-teal-50 p-6">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-md p-6">
         <h2 className="text-2xl font-bold mb-4 text-teal-700">Iniciar sesión</h2>
-
         {error && <div className="text-red-600 mb-2">{error}</div>}
-
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <input
             value={username}
@@ -59,12 +54,9 @@ export default function LoginView() {
             Iniciar sesión
           </button>
         </form>
-
         <div className="mt-3 text-sm text-gray-600">
           ¿No tienes cuenta?{" "}
-          <Link to="/register" className="text-teal-600 hover:underline">
-            Regístrate
-          </Link>
+          <Link to="/register" className="text-teal-600 hover:underline">Regístrate</Link>
         </div>
       </div>
     </div>

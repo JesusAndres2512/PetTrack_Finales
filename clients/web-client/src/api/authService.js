@@ -11,11 +11,9 @@ export const getUsersService = async () =>
   (await apiClient.get("/auth/users")).data;
 
 export const getProfileService = async (token) => {
-  if (!token) throw new Error("Token no definido");
-  const res = await axios.get("/profile", {
+  return axios.get("/profile", {
     headers: { Authorization: `Bearer ${token}` },
-  });
-  return res.data;
+  }).then(res => res.data);
 };
 
 export const logoutService = () => {

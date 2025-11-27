@@ -3,19 +3,19 @@ import apiClient from "../api/apiClient.js";
 
 // 🔹 Login
 export const loginService = async (payload) =>
-  (await apiClient.post("/login", payload)).data;
+  (await apiClient.post("/auth/login", payload)).data;
 
 // 🔹 Registro
 export const registerService = async (payload) =>
-  (await apiClient.post("/register", payload)).data;
+  (await apiClient.post("/auth/register", payload)).data;
 
 // 🔹 Obtener todos los usuarios (solo admin/doctor)
 export const getUsersService = async () =>
-  (await apiClient.get("/users")).data;
+  (await apiClient.get("/auth/users")).data;
 
 // 🔹 Obtener perfil del usuario actual
 export const getProfileService = async (token) => {
-  const res = await apiClient.get("/profile", {
+  const res = await apiClient.get("/auth/profile", {
     headers: { Authorization: `Bearer ${token}` },
   });
 

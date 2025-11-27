@@ -1,4 +1,3 @@
-// src/router/AppRouter.jsx
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoginView from "../pages/auth/LoginView.jsx";
@@ -24,7 +23,7 @@ import ViewUsers from "../pages/ViewUsers.jsx";
 import ViewPets from "../pages/ViewPets.jsx";
 import ViewAppointments from "../pages/ViewAppointments.jsx";
 
-// Rutas protegidas
+// ProtectedRoute
 import ProtectedRoute from "../components/ProtectedRoute.jsx";
 import DashboardRouter from "./DashboardRouter.jsx";
 
@@ -32,7 +31,6 @@ export default function AppRouter() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
-
       <Route path="/login" element={<LoginView />} />
       <Route path="/register" element={<RegisterView />} />
 
@@ -68,10 +66,7 @@ export default function AppRouter() {
         <Route path="/admin/appointments" element={<ViewAppointments />} />
       </Route>
 
-      <Route
-        path="*"
-        element={<div className="p-8 text-center text-gray-600">Página no encontrada</div>}
-      />
+      <Route path="*" element={<div className="p-8 text-center text-gray-600">Página no encontrada</div>} />
     </Routes>
   );
 }

@@ -1,4 +1,3 @@
-// src/context/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginService, getProfileService } from "../api/authService.js";
@@ -34,7 +33,13 @@ export const AuthProvider = ({ children }) => {
           username: data.username || "user",
           role: userRole,
         });
+
         localStorage.setItem("role", userRole);
+
+        // Redirige automáticamente al dashboard correcto si estamos en "/"
+        if (window.location.pathname === "/") {
+          navigate(rolePathMap[userRole] || "/login", { replace: true });
+        }
       } catch {
         logout();
       } finally {
@@ -43,7 +48,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     fetchProfile();
-  }, [token]);
+  }, [token, navigate]);
 
   const login = async ({ username, password }) => {
     try {
@@ -60,7 +65,6 @@ export const AuthProvider = ({ children }) => {
         role: userRole,
       });
 
-      // Navega al dashboard correcto solo desde aquí
       navigate(rolePathMap[userRole] || "/login", { replace: true });
       return data;
     } catch (err) {

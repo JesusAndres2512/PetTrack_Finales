@@ -30,6 +30,7 @@ export const AuthProvider = ({ children }) => {
         const data = await getProfileService(token);
         console.log("👤 [AuthContext] Perfil recibido:", data);
 
+        // Validar que exista rol
         if (!data.role || !rolePathMap[data.role]) {
           console.warn("❌ [AuthContext] Rol inválido, cerrando sesión");
           logout();
@@ -38,21 +39,21 @@ export const AuthProvider = ({ children }) => {
 
         // Guardar usuario en estado y localStorage
         const userData = {
-          id: data.id ?? data.user_id,
-          username: data.username,
+          id: data.user_id ?? data.id,
+          username: data.username ?? data.email.split("@")[0],
           email: data.email,
           role: data.role,
         };
         setUser(userData);
         localStorage.setItem("role", data.role);
 
+        // Redirigir según rol si la ruta actual no coincide
         const expectedPath = rolePathMap[data.role];
-        const currentPath = window.location.pathname;
-
-        if (!currentPath.startsWith(expectedPath)) {
+        if (!window.location.pathname.startsWith(expectedPath)) {
           console.log("🚀 [AuthContext] Redirigiendo a dashboard:", expectedPath);
           navigate(expectedPath, { replace: true });
         }
+
       } catch (err) {
         console.error("❌ [AuthContext] Error obteniendo perfil", err);
         logout();
@@ -86,6 +87,7 @@ export const AuthProvider = ({ children }) => {
       });
 
       navigate(rolePathMap[userRole], { replace: true });
+
     } catch (err) {
       console.error("❌ [AuthContext] Error en login:", err);
       throw err.response?.data || { detail: "Error al iniciar sesión" };

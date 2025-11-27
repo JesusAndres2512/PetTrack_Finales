@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
 
         // Guardar usuario en estado y localStorage
         const userData = {
-          id: data.user_id,
+          id: data.id ?? data.user_id,
           username: data.username,
           email: data.email,
           role: data.role,

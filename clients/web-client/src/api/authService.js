@@ -20,7 +20,6 @@ export const getProfileService = async (token) => {
   });
   console.log("📦 [getProfileService] Respuesta cruda:", res.data);
   return res.data; // Devuelve tal cual, para no perder información
-};
 
 // 🔹 Actualizar perfil del usuario actual
   const u = res.data;

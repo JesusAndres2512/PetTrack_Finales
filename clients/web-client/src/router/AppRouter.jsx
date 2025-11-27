@@ -1,36 +1,52 @@
+// src/router/AppRouter.jsx
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
+import DashboardRouter from "./DashboardRouter.jsx";
+import ProtectedRoute from "../components/ProtectedRoute.jsx";
+
+// AUTH PAGES
 import LoginView from "../pages/auth/LoginView.jsx";
 import RegisterView from "../pages/auth/RegisterView.jsx";
 
-// USER
+// USER PAGES
 import MenuCliente from "../pages/cliente/MenuCliente.jsx";
 import DashboardCliente from "../pages/cliente/DashboardCliente.jsx";
 import MascotasView from "../pages/cliente/MascotasView.jsx";
 import CitasClienteView from "../pages/cliente/CitasClienteView.jsx";
 import RewardsUsers from "../pages/RewardsUsers.jsx";
 
-// DOCTOR
+// DOCTOR PAGES
 import MenuDoctor from "../pages/doctor/MenuDoctor.jsx";
 import DashboardDoctor from "../pages/doctor/DashboardDoctor.jsx";
 import CitasDoctorView from "../pages/doctor/CitasDoctorView.jsx";
 import SeguimientoView from "../pages/doctor/SeguimientoView.jsx";
 
-// ADMIN
+// ADMIN PAGES
 import MenuAdmin from "../pages/admin/MenuAdmin.jsx";
 import DashboardAdmin from "../pages/admin/DashboardAdmin.jsx";
 import ViewUsers from "../pages/ViewUsers.jsx";
 import ViewPets from "../pages/ViewPets.jsx";
 import ViewAppointments from "../pages/ViewAppointments.jsx";
 
-// ProtectedRoute
-import ProtectedRoute from "../components/ProtectedRoute.jsx";
-import DashboardRouter from "./DashboardRouter.jsx";
-
 export default function AppRouter() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <div className="text-center mt-10">Verificando sesión...</div>;
+  }
+
+  // 🧭 RUTA RAÍZ → decidir según auth + role
+  if (user?.role === "admin") return <Navigate to="/admin/dashboard" replace />;
+  if (user?.role === "doctor") return <Navigate to="/doctor/dashboard" replace />;
+  if (user?.role === "user") return <Navigate to="/user/dashboard" replace />;
+
   return (
     <Routes>
+      {/* raíz por defecto */}
       <Route path="/" element={<Navigate to="/login" replace />} />
+
+      {/* Auth */}
       <Route path="/login" element={<LoginView />} />
       <Route path="/register" element={<RegisterView />} />
 
@@ -66,7 +82,8 @@ export default function AppRouter() {
         <Route path="/admin/appointments" element={<ViewAppointments />} />
       </Route>
 
-      <Route path="*" element={<div className="p-8 text-center text-gray-600">Página no encontrada</div>} />
+      {/* 404 */}
+      <Route path="*" element={<div className="p-8 text-center text-gray-500">Página no encontrada</div>} />
     </Routes>
   );
 }

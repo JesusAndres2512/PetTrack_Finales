@@ -17,15 +17,6 @@ export const AuthProvider = ({ children }) => {
     user: "/user/dashboard",
   };
 
-  const logout = () => {
-    console.log("👋 [AuthContext] Cerrando sesión...");
-    setUser(null);
-    setToken(null);
-    localStorage.clear();
-    navigate("/login", { replace: true });
-    setLoading(false);
-  };
-
   useEffect(() => {
     const fetchProfile = async () => {
       console.log("🔍 [AuthContext] Loading profile. Token:", token ? "EXISTE" : "NO EXISTE");
@@ -40,6 +31,7 @@ export const AuthProvider = ({ children }) => {
         console.log("👤 [AuthContext] Perfil recibido:", data);
 
         if (!data.role || !rolePathMap[data.role]) {
+          console.warn("❌ [AuthContext] Rol inválido, cerrando sesión");
           logout();
           return;
         }
@@ -47,20 +39,22 @@ export const AuthProvider = ({ children }) => {
         setUser({
           id: data.user_id,
           username: data.username,
-          role: data.role,
           email: data.email,
+          role: data.role,
         });
+
         localStorage.setItem("role", data.role);
 
         const expectedPath = rolePathMap[data.role];
         const currentPath = window.location.pathname;
+
+        // Redirigir solo si la ruta actual no coincide con el rol
         if (!currentPath.startsWith(expectedPath)) {
-          console.log("🚀 [AuthContext] Redirigiendo a:", expectedPath);
+          console.log("🚀 [AuthContext] Redirigiendo a dashboard:", expectedPath);
           navigate(expectedPath, { replace: true });
         }
-
       } catch (err) {
-        console.error("❌ [AuthContext] Error obteniendo perfil:", err);
+        console.error("❌ [AuthContext] Error obteniendo perfil", err);
         logout();
       } finally {
         setLoading(false);
@@ -68,7 +62,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     fetchProfile();
-  }, [token, navigate]);
+  }, [token]);
 
   const login = async ({ username, password }) => {
     try {
@@ -87,16 +81,23 @@ export const AuthProvider = ({ children }) => {
       setUser({
         id: data.user_id,
         username,
-        role: userRole,
         email: data.email,
+        role: userRole,
       });
 
       navigate(rolePathMap[userRole], { replace: true });
-
-      return data;
     } catch (err) {
       throw err.response?.data || { detail: "Error al iniciar sesión" };
     }
+  };
+
+  const logout = () => {
+    console.log("👋 [AuthContext] Cerrando sesión...");
+    setUser(null);
+    setToken(null);
+    localStorage.clear();
+    navigate("/login", { replace: true });
+    setLoading(false);
   };
 
   return (

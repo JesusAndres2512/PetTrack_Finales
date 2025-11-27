@@ -2,6 +2,7 @@
 import Navbar from "../../components/Navbar.jsx";
 import Card from "../../components/Card.jsx";
 import { useNavigate } from "react-router-dom";
+import DebugPanel from "../../components/DebugPanel.jsx";
 
 export default function DashboardAdmin() {
   const navigate = useNavigate();
@@ -38,6 +39,7 @@ export default function DashboardAdmin() {
           />
         </div>
       </div>
+      <DebugPanel />
     </div>
   );
 }

@@ -1,6 +1,5 @@
-// src/context/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { loginService, getProfileService } from "../api/authService.js";
 
 const AuthContext = createContext();
@@ -8,8 +7,6 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
-  const location = useLocation();
-
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [loading, setLoading] = useState(true);
@@ -17,53 +14,46 @@ export const AuthProvider = ({ children }) => {
   const rolePathMap = {
     admin: "/admin/dashboard",
     doctor: "/doctor/dashboard",
-    user: "/user/dashboard",
+    user: "/dashboard/user",
   };
 
   useEffect(() => {
     const fetchProfile = async () => {
-      console.log("🔍 [AuthContext] Cargando perfil con token:", token ? "EXISTE" : "NO EXISTE");
+      console.log("🔍 [AuthContext] Loading profile. Token:", token ? "EXISTE" : "NO EXISTE");
 
       if (!token) {
         setLoading(false);
-        navigate("/login", { replace: true });
         return;
       }
 
       try {
-        const data = await getProfileService();
-        const userRole = data.role;
+        const data = await getProfileService(token);
 
-        console.log("👤 [AuthContext] Perfil recibido. Rol:", userRole);
+        console.log("👤 [AuthContext] Perfil recibido. Rol:", data.role);
 
-        if (!userRole || !rolePathMap[userRole]) {
-          console.error("❌ [AuthContext] Rol inválido o no definido, cerrando sesión.");
+        if (!data.role || !rolePathMap[data.role]) {
           logout();
           return;
         }
 
-        setUser({
+        const userData = {
           id: data.user_id,
           username: data.username,
-          role: userRole,
-        });
+          role: data.role,
+        };
 
-        localStorage.setItem("role", userRole);
+        setUser(userData);
 
-        const expectedPath = rolePathMap[userRole];
-        const currentPath = location.pathname;
+        const expectedPath = rolePathMap[data.role];
+        const currentPath = window.location.pathname;
 
-        console.log("📍 [AuthContext] Ruta actual:", currentPath);
-        console.log("🎯 [AuthContext] Ruta esperada para rol:", expectedPath);
-
-        // Solo redirigir si no estamos ya en la ruta correcta
         if (!currentPath.startsWith(expectedPath)) {
-          console.log("🔀 [AuthContext] Redirigiendo a:", expectedPath);
+          console.log("🚀 [AuthContext] Redirecting to:", expectedPath);
           navigate(expectedPath, { replace: true });
         }
 
       } catch (err) {
-        console.error("⚠ [AuthContext] Error al obtener perfil:", err);
+        console.error("❌ [AuthContext] Error obteniendo perfil", err);
         logout();
       } finally {
         setLoading(false);
@@ -71,24 +61,20 @@ export const AuthProvider = ({ children }) => {
     };
 
     fetchProfile();
-  }, [token, location.pathname]);
+  }, [token]);
 
   const login = async ({ username, password }) => {
-    console.log("🔐 [AuthContext] Intentando login...");
-
     try {
+      console.log("🔐 [AuthContext] Intentando login...");
       const data = await loginService({ username, password });
+
+      const userToken = data.access_token;
       const userRole = data.role;
 
       console.log("✅ [AuthContext] Login OK. Rol:", userRole);
 
-      if (!userRole || !rolePathMap[userRole]) {
-        console.error("❌ Rol no reconocido, no se puede redirigir.");
-        throw { detail: "Rol no reconocido por el sistema." };
-      }
-
-      setToken(data.access_token);
-      localStorage.setItem("token", data.access_token);
+      setToken(userToken);
+      localStorage.setItem("token", userToken);
       localStorage.setItem("role", userRole);
 
       setUser({
@@ -97,14 +83,10 @@ export const AuthProvider = ({ children }) => {
         role: userRole,
       });
 
-      const expectedPath = rolePathMap[userRole];
-      console.log("🚀 [AuthContext] Redirigiendo a dashboard según rol:", expectedPath);
-      navigate(expectedPath, { replace: true });
+      navigate(rolePathMap[userRole], { replace: true });
 
-      return data;
     } catch (err) {
-      console.error("⚠ [AuthContext] Error en login:", err);
-      throw err;
+      throw err.response?.data || { detail: "Error al iniciar sesión" };
     }
   };
 
@@ -114,6 +96,7 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     localStorage.clear();
     navigate("/login", { replace: true });
+    setLoading(false);
   };
 
   return (

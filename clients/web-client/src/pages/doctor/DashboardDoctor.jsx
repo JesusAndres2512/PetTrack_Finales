@@ -1,6 +1,7 @@
 import Navbar from "../../components/Navbar.jsx";
 import Card from "../../components/Card.jsx";
 import { useNavigate } from "react-router-dom";
+import DebugPanel from "../../components/DebugPanel.jsx";
 
 export default function DashboardDoctor() {
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ export default function DashboardDoctor() {
           />
         </div>
       </div>
+      <DebugPanel />
     </div>
   );
 }

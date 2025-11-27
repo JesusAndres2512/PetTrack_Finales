@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Sidebar.jsx";
 import { getPets } from "../../api/pets.js";
 import { useAuth } from "../../context/AuthContext.jsx";
+import DebugPanel from "../../components/DebugPanel.jsx";
+
 
 export default function DashboardCliente() {
   const { token } = useAuth();
@@ -62,6 +64,7 @@ export default function DashboardCliente() {
           ))}
         </div>
       </div>
+      <DebugPanel />
     </div>
   );
 }

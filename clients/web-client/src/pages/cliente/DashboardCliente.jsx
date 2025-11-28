@@ -31,22 +31,18 @@ export default function DashboardCliente() {
         <p className="text-gray-700 mb-4">Aquí puedes ver tus mascotas registradas.</p>
 
         {/* 🔹 Botón para ir a la vista de recompensas */}
-        <div className="mb-6">
+        <div className="mb-6 flex gap-4 flex-wrap">
           <button
             onClick={() => navigate("/user/rewards")}
             className="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg shadow-md transition-all"
           >
             🎁 Ver Recompensas
           </button>
-        </div>
-
-                {/* 🔹 Botón para ir a la vista de recompensas */}
-        <div className="mb-6">
           <button
-            onClick={() => navigate("/user/rewards")}
-            className="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg shadow-md transition-all"
+            onClick={() => navigate("/user/postconsulta")}
+            className="px-5 py-2 bg-cyan-600 hover:bg-cyan-700 text-white font-semibold rounded-lg shadow-md transition-all"
           >
-            Post-Consulta
+            📋 Seguimiento Post-Consulta
           </button>
         </div>
 

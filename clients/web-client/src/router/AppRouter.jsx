@@ -15,6 +15,7 @@ import DashboardCliente from "../pages/cliente/DashboardCliente.jsx";
 import MascotasView from "../pages/cliente/MascotasView.jsx";
 import CitasClienteView from "../pages/cliente/CitasClienteView.jsx";
 import RewardsUsers from "../pages/RewardsUsers.jsx";
+import PostconsultaClienteView from "../pages/cliente/PostconsultaClienteView.jsx";
 
 // DOCTOR PAGES
 import MenuDoctor from "../pages/doctor/MenuDoctor.jsx";
@@ -74,6 +75,7 @@ export default function AppRouter() {
         <Route path="/user/mascotas" element={<MascotasView />} />
         <Route path="/user/citas" element={<CitasClienteView />} />
         <Route path="/user/rewards" element={<RewardsUsers />} />
+        <Route path="/user/postconsulta" element={<PostconsultaClienteView />} />
       </Route>
 
       {/* DOCTOR */}

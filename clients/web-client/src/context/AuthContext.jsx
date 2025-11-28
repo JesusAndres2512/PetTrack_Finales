@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }) => {
       try {
         console.log("🔍 [AuthContext] Loading profile. Token: EXISTE");
 
-        const data = await getProfileService(token);
+        const data = await getProfileService();
         console.log("👤 [AuthContext] Perfil recibido:", data);
 
         // Detectar rol real según la respuesta

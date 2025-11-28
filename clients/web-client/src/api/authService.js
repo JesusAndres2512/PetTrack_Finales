@@ -16,11 +16,10 @@ export const getUsersService = async () =>
 // 🔹 Obtener perfil del usuario actual
 export const getProfileService = async (token) => {
   try {
-    console.log("🔍 [getProfileService] Token enviado:", token);
+    console.log("🔍 [getProfileService] Obteniendo perfil (token en localStorage)");
 
-    const res = await apiClient.get("/auth/profile", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    // El apiClient interceptor ya añade el Authorization header automáticamente desde localStorage
+    const res = await apiClient.get("/auth/profile");
 
     console.log("📦 [getProfileService] Respuesta cruda:", res.data);
 

@@ -22,7 +22,15 @@ export default function LoginView() {
       // ✅ No redirección manual aquí, AuthContext ya maneja rutas según rol
     } catch (err) {
       console.error("Error en login:", err);
-      setError(err.detail || err.response?.data?.detail || "Credenciales inválidas o error en el servidor.");
+      
+      // Manejar errores de red/CORS de forma más clara
+      if (err.isNetworkError || !err.response) {
+        setError("Error de conexión. Verifica que el servidor esté disponible y que CORS esté configurado correctamente.");
+      } else if (err.response?.status === 0) {
+        setError("No se pudo conectar al servidor. Verifica la configuración de CORS o la URL del API.");
+      } else {
+        setError(err.detail || err.response?.data?.detail || "Credenciales inválidas o error en el servidor.");
+      }
     }
   };
 

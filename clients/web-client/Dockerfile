@@ -15,14 +15,19 @@ COPY . .
 # =============================
 # Pasar variables de entorno de Vite en tiempo de build
 # =============================
+ARG VITE_API_GATEWAY_URL
 ARG VITE_API_APIM_URL
-ENV VITE_API_APIM_URL=https://pettrack-apim.azure-api.net
 
-# Verificar que la variable llegó (opcional)
+# Valores por defecto
+ENV VITE_API_GATEWAY_URL=${VITE_API_GATEWAY_URL:-http://localhost:8003}
+ENV VITE_API_APIM_URL=${VITE_API_APIM_URL:-https://pettrack-apim.azure-api.net}
+
+# Verificar que las variables llegaron (opcional)
+RUN echo "VITE_API_GATEWAY_URL=$VITE_API_GATEWAY_URL"
 RUN echo "VITE_API_APIM_URL=$VITE_API_APIM_URL"
 
-# Ejecutar build con la variable inyectada
-RUN VITE_API_APIM_URL=$VITE_API_APIM_URL npm run build
+# Ejecutar build con las variables inyectadas
+RUN npm run build
 
 # =============================
 # Etapa 2: Servir con Nginx

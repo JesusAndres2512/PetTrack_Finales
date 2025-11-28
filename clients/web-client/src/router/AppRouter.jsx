@@ -33,13 +33,28 @@ export default function AppRouter() {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div className="text-center mt-10">Verificando sesión...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-teal-50">
+        <div className="text-center">
+          <div className="text-teal-700 text-lg">Verificando sesión...</div>
+        </div>
+      </div>
+    );
   }
 
-  // 🧭 RUTA RAÍZ → decidir según auth + role
-  if (user?.role === "admin") return <Navigate to="/admin/dashboard" replace />;
-  if (user?.role === "doctor") return <Navigate to="/doctor/dashboard" replace />;
-  if (user?.role === "user") return <Navigate to="/user/dashboard" replace />;
+  // 🧭 RUTA RAÍZ → decidir según auth + role (solo si estamos en la raíz)
+  const currentPath = window.location.pathname;
+  if (currentPath === "/" && user?.role) {
+    const rolePathMap = {
+      admin: "/admin/dashboard",
+      doctor: "/doctor/dashboard",
+      user: "/user/dashboard",
+    };
+    const expectedPath = rolePathMap[user.role];
+    if (expectedPath) {
+      return <Navigate to={expectedPath} replace />;
+    }
+  }
 
   return (
     <Routes>

@@ -17,24 +17,31 @@ export const AuthProvider = ({ children }) => {
     user: "/user/dashboard",
   };
 
-  // 🔹 Cargar perfil si hay token
+  // 🔹 Cargar perfil si hay token pero no hay usuario (solo en refresh/recarga)
   useEffect(() => {
     const fetchProfile = async () => {
+      // Si ya tenemos usuario, no necesitamos hacer el request
+      if (user) {
+        setLoading(false);
+        return;
+      }
+
       if (!token) {
         setLoading(false);
         return;
       }
 
       try {
-        console.log("🔍 [AuthContext] Loading profile. Token: EXISTE");
+        console.log("🔍 [AuthContext] Loading profile. Token: EXISTE, User: NO");
 
-        const data = await getProfileService();
+        const data = await getProfileService(token);
         console.log("👤 [AuthContext] Perfil recibido:", data);
 
         // Detectar rol real según la respuesta
         const userRole = data.role ?? data.rol;
         if (!userRole || !rolePathMap[userRole]) {
-          console.warn("❌ [AuthContext] Rol inválido");
+          console.warn("❌ [AuthContext] Rol inválido:", userRole);
+          setLoading(false);
           return; // No cerrar sesión, solo no redirigir
         }
 
@@ -56,13 +63,20 @@ export const AuthProvider = ({ children }) => {
 
       } catch (err) {
         console.error("❌ [AuthContext] Error obteniendo perfil", err);
+        // Si falla el perfil, limpiar token inválido
+        if (err.response?.status === 401) {
+          console.warn("🔒 Token inválido, limpiando sesión");
+          setToken(null);
+          localStorage.removeItem("token");
+          localStorage.removeItem("role");
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchProfile();
-  }, [token, navigate]);
+  }, [token, navigate, user]);
 
   // 🔹 Login
   const login = async ({ username, password }) => {
@@ -73,25 +87,38 @@ export const AuthProvider = ({ children }) => {
       const userToken = data.access_token;
       const userRole = data.role;
 
-      console.log("✅ [AuthContext] Login OK. Rol:", userRole);
+      console.log("✅ [AuthContext] Login OK. Rol:", userRole, "Datos:", data);
 
+      // Validar que tenemos los datos necesarios
+      if (!userToken || !userRole) {
+        throw new Error("Respuesta de login incompleta");
+      }
+
+      // Establecer token y usuario ANTES de redirigir
       setToken(userToken);
       localStorage.setItem("token", userToken);
       localStorage.setItem("role", userRole);
 
-      setUser({
+      const userData = {
         id: data.user_id,
         username: data.username ?? username,
         email: data.email,
         role: userRole,
-      });
+      };
+
+      setUser(userData);
+      setLoading(false); // Asegurar que loading sea false después del login
 
       // Redirigir automáticamente al dashboard según rol
       const expectedPath = rolePathMap[userRole];
-      if (expectedPath) navigate(expectedPath, { replace: true });
+      if (expectedPath) {
+        console.log("🚀 [AuthContext] Redirigiendo a:", expectedPath);
+        navigate(expectedPath, { replace: true });
+      }
 
     } catch (err) {
       console.error("❌ [AuthContext] Error en login:", err);
+      setLoading(false); // Asegurar que loading sea false en caso de error
       throw err.response?.data || { detail: "Error al iniciar sesión" };
     }
   };

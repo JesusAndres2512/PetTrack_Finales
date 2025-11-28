@@ -102,15 +102,16 @@ services:
 
   # === WEB CLIENT ===
   client:
-    build: ./clients/web-client
+    build: 
+      context: ./clients/web-client
+      args:
+        VITE_API_GATEWAY_URL: http://localhost:8003
+        VITE_API_APIM_URL: https://pettrack-apim.azure-api.net
     container_name: web_client
     ports:
       - "80:80"
     depends_on:
       - api-gateway
-    environment:
-      VITE_API_GATEWAY_URL: http://api-gateway:8003
-      VITE_API_APIM_URL: https://pettrack-apim.azure-api.net
     restart: always
     networks:
       - backend

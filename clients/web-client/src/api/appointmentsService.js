@@ -5,3 +5,5 @@ const API_URL = import.meta.env.VITE_API_GATEWAY || import.meta.env.VITE_API_API
 
 export const getAppointments = async () => (await axios.get(`${API_URL}/appointments`)).data;
 export const createAppointment = async (data) => (await axios.post(`${API_URL}/appointments`, data)).data;
+export const updateAppointment = async (appointmentId, data) => (await axios.put(`${API_URL}/appointments/${appointmentId}`, data)).data;
+export const deleteAppointment = async (appointmentId) => (await axios.delete(`${API_URL}/appointments/${appointmentId}`)).data;

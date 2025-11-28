@@ -5,24 +5,14 @@ const API_BASE = import.meta.env.VITE_API_APIM_URL || "https://pettrack-apim.azu
 const apiClient = axios.create({
   baseURL: API_BASE,
   headers: { "Content-Type": "application/json" },
+  withCredentials: true // 👈 esto permite que se envíen y reciban cookies
 });
 
-// 🔒 Inyectar JWT en cada request
-apiClient.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-// ⚠️ Cerrar sesión en 401
+// 🔒 Interceptor para errores de autenticación
 apiClient.interceptors.response.use(
   (res) => res,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.clear();
       window.location.href = "/login";
     }
     return Promise.reject(error);
